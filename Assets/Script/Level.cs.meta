@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: a8066a0b75de3bf4c836e92980486228
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - animalPrefab: {fileID: 100000, guid: 60f02274b3459ef4b887190b8f643101, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
