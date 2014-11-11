@@ -9,8 +9,8 @@ public class Move : MonoBehaviour {
     Action busyAction, idleAction;
     public MoveState moveState;
 
-    public Box targetBox;
-    public Box currentBox;
+    //public Box targetBox;
+    public Box box; // currentBox
 
     protected void Start()
     {
@@ -30,7 +30,7 @@ public class Move : MonoBehaviour {
         {
             moveState.from = transform.position;
             moveState.to = result.position;
-            currentBox.Leave();
+            box.Leave();
             result.Enter(this);
             return true;
         }
@@ -49,13 +49,13 @@ public class Move : MonoBehaviour {
         if (action == idleAction && target.action == target.idleAction)
         {
             moveState.from = transform.position;
-            moveState.to = target.currentBox.position;
+            moveState.to = target.box.position;
 
             target.moveState.from = moveState.to;
             target.moveState.to = moveState.from;
 
-            Box thisBox = currentBox;
-            target.currentBox.Enter(this);
+            Box thisBox = box;
+            target.box.Enter(this);
             thisBox.Enter(target);
 
             moveState.isMoving = true;
@@ -73,7 +73,7 @@ public class Move : MonoBehaviour {
     void MoveEnd()
     {
         //print("MoveEnd");
-        targetBox = null;
+        //targetBox = null;
         action = idleAction;
     }
     //移动中的处理
@@ -113,22 +113,22 @@ public class Move : MonoBehaviour {
         //}
         //else
         //{
-            if (currentBox.lower[0] != null && currentBox.lower[0].IsEmpty())
+            if (box.lower[0] != null && box.lower[0].IsEmpty())
             {
-                Box result = currentBox.lower[0];
+                Box result = box.lower[0];
                 //while (result.lower[0] != null && result.lower[0].IsEmpty())
                 //{
                 //    result = result.lower[0];
                 //}
                 return result;
             }
-            if (currentBox.lower[1] != null && currentBox.lower[1].isNeck && currentBox.lower[1].IsEmpty())
+            if (box.lower[1] != null && box.lower[1].isNeck && box.lower[1].IsEmpty())
             {
-                return currentBox.lower[1];
+                return box.lower[1];
             }
-            if (currentBox.lower[2] != null && currentBox.lower[2].isNeck && currentBox.lower[2].IsEmpty())
+            if (box.lower[2] != null && box.lower[2].isNeck && box.lower[2].IsEmpty())
             {
-                return currentBox.lower[2];
+                return box.lower[2];
             }
         //}
         return null;

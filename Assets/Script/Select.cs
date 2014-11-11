@@ -21,14 +21,14 @@ public class Select : MonoBehaviour
                 if (current == null)
                 {
                     //选中
-                    current = hit.transform.GetComponent<Animal>();
+                    DoSelect(hit.transform.GetComponent<Animal>());
                 }
                 else
                 {
                     if (hit.transform.GetComponent<Animal>() == current)
                     {
                         //取消选中
-                        current = null;
+                        CancelSelect();
                     }
                     //else if(相邻)
                     //{ 交换}
@@ -38,14 +38,25 @@ public class Select : MonoBehaviour
             {
                 if (Input.GetMouseButton(0))
                 {
-                    if (hit.transform.GetComponent<Animal>() != current)
+                    Animal other = hit.transform.GetComponent<Animal>();
+                    if (other != current && other.IsNeighbor(current))
                     {
                         current.Swap(hit.transform.GetComponent<Animal>());
                         //取消选中
-                        current = null;
+                        CancelSelect();
                     }
                 }
             }
         }
 	}
+    void CancelSelect()
+    {
+        current.Play(AnimatEnum.idle);
+        current = null;
+    }
+    void DoSelect(Animal animal)
+    {
+        current = animal;
+        current.Play(AnimatEnum.click);
+    }
 }

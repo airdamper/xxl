@@ -72,7 +72,7 @@ public class Box : MonoBehaviour {
     public void Enter(Move move)
     {
         content = move;
-        content.currentBox = this;
+        content.box = this;
     }
 
     //是空的就可以让球进入,条件根据状态改变,之后可能添加不同的状态影响这里的判断  -XA03
@@ -91,8 +91,12 @@ public class Box : MonoBehaviour {
         GameObject go = Instantiate(Level.Instance.animalPrefab) as GameObject;//GameObject.CreatePrimitive(PrimitiveType.Sphere);
         Move move = go.GetComponent<Move>();
         //go.renderer.material.color = new Color(Random.Range(0f, 1), Random.Range(0f, 1), Random.Range(0f, 1), 1);
-        move.currentBox = this;
-        move.targetBox = this;
+        move.box = this;
+        //move.targetBox = this;
         return move;
+    }
+    public bool IsNeighbor(Box other)
+    {
+        return (position - other.position).sqrMagnitude < 2;
     }
 }
