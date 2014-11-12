@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Select : MonoBehaviour 
 {
@@ -58,5 +59,10 @@ public class Select : MonoBehaviour
     {
         current = animal;
         current.Play(AnimatEnum.click);
+        //测试AnimalChecker的邻居方法
+        //AnimalChecker checker = new AnimalChecker(current);
+        //print(checker.GetTestString());
     }
+
+    
 }

@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Animal : MonoBehaviour 
 {
     int color;
     SpriteRenderer sprite;
-    Move move;
+    public Move move;
     Animat agent;
 	// Use this for initialization
 	void Start () 
@@ -51,5 +52,15 @@ public class Animal : MonoBehaviour
     public bool IsNeighbor(Animal other)
     {
         return move.box.IsNeighbor(other.move.box);
+    }
+
+    /// <summary>
+    /// 检测当前Animal位置填入对应颜色返回的消除列
+    /// </summary>
+    /// <param name="color">当前位置要替换掉的颜色</param>
+    /// <returns></returns>
+    public List<Box> Check(int color)
+    {
+        return null;
     }
 }
