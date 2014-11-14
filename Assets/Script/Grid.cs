@@ -16,6 +16,8 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Grid : Only<Grid> {
+    public bool debug = false;
+
     public const int CRITICAL_POINT = 3;   //针对数据定义的分界点,用来气氛数据中那些是可以通过的.
 
     //public static Grid Instance;
@@ -131,6 +133,8 @@ public class Grid : Only<Grid> {
                     boxs[i].GetComponentInChildren<TextMesh>().color = Color.blue;
                     Debug.Log("Set boxs[" + i + "].text.color = blue");
                 }
+                if (!debug)
+                    go.GetComponentInChildren<TextMesh>().gameObject.SetActive(false);
             }
             i++;
         }
@@ -148,7 +152,8 @@ public class Grid : Only<Grid> {
             if (data[i] == 1)
             {
                 //boxs[i].spawner = true;
-                boxs[i].GetComponentInChildren<TextMesh>().color = Color.green;
+                if(debug)
+                    boxs[i].GetComponentInChildren<TextMesh>().color = Color.green;
                 Spawn spawn = boxs[i].gameObject.AddComponent<Spawn>();
                 spawn.box = boxs[i];
                 Debug.Log("Set boxs[" + i + "].text.color = green");

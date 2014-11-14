@@ -4,7 +4,9 @@ using System.Collections;
 public class Level : Only<Level>
 {
     public GameObject animalPrefab;
-    public Color[] animalColor = new Color[5];
+    public RuntimeAnimatorController[] animalColor = new RuntimeAnimatorController[5];
+    public RuntimeAnimatorController destroy_effect;
+    public SpriteRenderer tileSelect;
 	// Use this for initialization
 	void Start () {
 		

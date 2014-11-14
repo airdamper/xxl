@@ -16,11 +16,11 @@ public class Animal : MonoBehaviour
 	// Use this for initialization
 	void Start () 
     {
+        agent = new Animat(GetComponent<Animator>());
         sprite = GetComponent<SpriteRenderer>();
         move = GetComponent<Move>();
         move.animal = this;
         RandomColor();
-        agent = new Animat(GetComponent<Animator>());
 	}
 	
 	// Update is called once per frame
@@ -32,7 +32,7 @@ public class Animal : MonoBehaviour
     void RandomColor()
     {
         color = Random.Range(0, Level.Instance.animalColor.Length);
-        sprite.color = Level.Instance.animalColor[color];
+        agent.agent.runtimeAnimatorController = Level.Instance.animalColor[color];
     }
 
     /// <summary>
@@ -76,10 +76,11 @@ public class Animal : MonoBehaviour
     {
         agent.Play(name);
     }
-    void Explode()
-    {
-        Destroy(gameObject);
-    }
+    //void Explode()
+    //{
+    //    agent.agent.runtimeAnimatorController = Level.Instance.destroy_effect;
+    //    Destroy(gameObject,0.6f);
+    //}
     public bool IsNeighbor(Animal other)
     {
         return move.box.IsNeighbor(other.move.box);
@@ -90,8 +91,9 @@ public class Animal : MonoBehaviour
     /// </summary>
     public void EliminateSelf()
     {
-        move.box.Leave();
-        Destroy(gameObject);
+        //move.box.Leave();
+        agent.agent.runtimeAnimatorController = Level.Instance.destroy_effect;
+        Destroy(gameObject, 0.6f);
         //计算加分     -XA111301
     }
     public void EliminateAll()

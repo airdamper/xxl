@@ -5,9 +5,11 @@ using System.Collections.Generic;
 public class Select : MonoBehaviour 
 {
     Animal current;
+    SpriteRenderer tile;
 	// Use this for initialization
 	void Start () {
-		
+        tile = Level.Instance.tileSelect;
+        tile.enabled = false;
 	}
 	
 	// Update is called once per frame
@@ -47,7 +49,7 @@ public class Select : MonoBehaviour
                 if (Input.GetMouseButton(0))
                 {
                     Animal other = hit.transform.GetComponent<Animal>();
-                    if (other != current && other.IsNeighbor(current) && current.color != other.color)
+                    if (other != current && other.IsNeighbor(current))// && current.color != other.color)
                     {
                         current.Swap(other);
                         //取消选中
@@ -61,11 +63,14 @@ public class Select : MonoBehaviour
     {
         current.Play(AnimatEnum.idle);
         current = null;
+        tile.enabled = false;
     }
     void DoSelect(Animal animal)
     {
         current = animal;
         current.Play(AnimatEnum.click);
+        tile.transform.position = animal.move.box.position;
+        tile.enabled = true;
         //测试AnimalChecker的邻居方法
         //AnimalChecker checker = new AnimalChecker(current);
         //print(checker.GetTestString());
