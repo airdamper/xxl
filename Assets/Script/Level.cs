@@ -7,6 +7,7 @@ public class Level : Only<Level>
     public RuntimeAnimatorController[] animalColor = new RuntimeAnimatorController[5];
     public RuntimeAnimatorController destroy_effect;
     public SpriteRenderer tileSelect;
+    public GameObject mask;
 	// Use this for initialization
 	void Start () {
 		

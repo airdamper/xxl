@@ -158,10 +158,11 @@ public class Grid : Only<Grid> {
                 spawn.box = boxs[i];
                 Debug.Log("Set boxs[" + i + "].text.color = green");
                 spawnList.Add(i);
-                //添加开发点
+                //添加出发发点
                 GameObject go = new GameObject("Spawn" + i);
                 Box box = go.AddComponent<Box>();
                 go.transform.position = new Vector3(i % GRID_X_COUNT, i / GRID_X_COUNT + 1, 0);
+                Instantiate(Level.Instance.mask, go.transform.position - Vector3.forward, Quaternion.identity).name = "Massk" + i;
                 box.index = -1;
                 box.lower[0] = boxs[i];
                 box.spawner = true;

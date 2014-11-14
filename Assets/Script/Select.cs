@@ -61,12 +61,14 @@ public class Select : MonoBehaviour
 	}
     void CancelSelect()
     {
+        Sound.Instance.Click();
         current.Play(AnimatEnum.idle);
         current = null;
         tile.enabled = false;
     }
     void DoSelect(Animal animal)
     {
+        Sound.Instance.Click();
         current = animal;
         current.Play(AnimatEnum.click);
         tile.transform.position = animal.move.box.position;

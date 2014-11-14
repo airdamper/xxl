@@ -49,6 +49,7 @@ public class Animal : MonoBehaviour
         
         if (callback)
         {
+            Sound.Instance.Swap();
             other = animal;
             other.other = this; //记录上一次交换的对象
             int temp = color;
@@ -91,6 +92,7 @@ public class Animal : MonoBehaviour
     /// </summary>
     public void EliminateSelf()
     {
+        Sound.Instance.Eliminate();
         //move.box.Leave();
         agent.agent.runtimeAnimatorController = Level.Instance.destroy_effect;
         Destroy(gameObject, 0.6f);
