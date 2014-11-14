@@ -1,18 +1,24 @@
-﻿using UnityEngine;
+﻿/*
+ * 计算加分: -XA111301f
+ */
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
 public class Animal : MonoBehaviour 
 {
-    int color;
+    public int color;
     SpriteRenderer sprite;
     public Move move;
     Animat agent;
+
+    public Animal other; // 上一次交换的对象
 	// Use this for initialization
 	void Start () 
     {
         sprite = GetComponent<SpriteRenderer>();
         move = GetComponent<Move>();
+        move.animal = this;
         RandomColor();
         agent = new Animat(GetComponent<Animator>());
 	}
@@ -35,6 +41,31 @@ public class Animal : MonoBehaviour
     /// <param name="animal"></param>
     public void Swap(Animal animal)
     {
+        Swap(animal, true);
+    }
+    public void Swap(Animal animal, bool callback)
+    {
+        
+        
+        if (callback)
+        {
+            other = animal;
+            other.other = this; //记录上一次交换的对象
+            int temp = color;
+            color = other.color;
+            other.color = temp;   //交换颜色,模拟交换后的数据.
+            if (other.move.box.checker.Check(other.color) || move.box.checker.Check(color))
+            {
+                move.event_move_complete += CallBack_MoveEnd_Eliminate;
+            }
+            else
+            {
+                move.event_move_complete += CallBack_MoveEnd_MoveBack;
+            }
+            //换回颜色
+            other.color = color;
+            color = temp;
+        }
         move.Swap(animal.move);
     }
     /// <summary>
@@ -55,12 +86,43 @@ public class Animal : MonoBehaviour
     }
 
     /// <summary>
-    /// 检测当前Animal位置填入对应颜色返回的消除列
+    /// 消除当前
+    /// </summary>
+    public void EliminateSelf()
+    {
+        move.box.Leave();
+        Destroy(gameObject);
+        //计算加分     -XA111301
+    }
+    public void EliminateAll()
+    {
+        if (move.box.checker.Check(color))
+        {
+            foreach (Animal animal in move.box.checker.GetEliminateList())
+            {
+                animal.EliminateSelf();
+            }
+        }
+    }
+    /// <summary>
+    /// 检测当前Animal位置填入对应颜色返回的消除列 
     /// </summary>
     /// <param name="color">当前位置要替换掉的颜色</param>
-    /// <returns></returns>
-    public List<Box> Check(int color)
+    public bool Check(int color)
     {
-        return null;
+        return false;
+    }
+
+    void CallBack_MoveEnd_MoveBack()
+    {
+        move.event_move_complete -= CallBack_MoveEnd_MoveBack;
+        other.move.Stop();
+        Swap(other, false);
+    }
+    void CallBack_MoveEnd_Eliminate()
+    {
+        EliminateAll();
+        other.EliminateAll();
+        move.event_move_complete -= CallBack_MoveEnd_Eliminate;
     }
 }

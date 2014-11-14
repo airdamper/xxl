@@ -1,5 +1,10 @@
 ﻿/*
  * 保存结果,计算特技.
+ * 
+ * 
+ * ===========
+ * 
+ * -XA111303 特效处理
  */
 using UnityEngine;
 using System.Collections;
@@ -10,30 +15,18 @@ public class AnimalChecker
     /// <summary>
     /// 是否有可以消除的对象
     /// </summary>
-    //public bool canDo { get;private set; }
-    int _checkColor = -1;
-    int checkColor
-    {
-        get { return _checkColor; }
-        set
-        {
-            if (_checkColor != value)
-            {
-                _checkColor = value;
-                Check(value);
-            }
-        }
-    }
+    public bool canDo { get;private set; }
+    //int checkColor;
     Box box;
-    List<Box> x;
-    List<Box> y;
+    List<Box> x = new List<Box>();
+    List<Box> y = new List<Box>();
     List<Box> up;
     List<Box> down;
     List<Box> left;
     List<Box> right;
-    public AnimalChecker(Animal animal)
+    public AnimalChecker(Box box)
     {
-        box = animal.move.box;
+        this.box = box;
         up = GetNeighbor(-Grid.GRID_X_COUNT);
         down = GetNeighbor(Grid.GRID_X_COUNT);
         left = GetNeighbor(-1);
@@ -62,9 +55,72 @@ public class AnimalChecker
         }
         return result;
     }
+    /// <summary>
+    /// 在执行其他操作前都需要执行此方法
+    /// </summary>
+    /// <param name="color"></param>
+    /// <returns></returns>
     public bool Check(int color)
     {
-        return false;
+        x.Clear();
+        y.Clear();
+        AddToList(up, color, false);
+        AddToList(down, color, false);
+        AddToList(left, color, true);
+        AddToList(right, color, true);
+        canDo = x.Count >= 2 || y.Count >= 2;
+        return canDo;
+    }
+    //boo用来区分横纵,true:x,false:y
+    void AddToList(List<Box> list,int color, bool boo)
+    {
+        for (int i = 0; i < list.Count; i++)
+        {
+            if (list[i].content != null && !list[i].content.moveState.isMoving && list[i].content.animal.color == color)
+            {
+                if (boo)
+                {
+                    x.Add(list[i]);
+                }
+                else
+                {
+                    y.Add(list[i]);
+                }
+            }
+            else
+                break;
+        }
+    }
+    /// <summary>
+    /// 获得消除列表,需要先执行Check方法
+    /// </summary>
+    /// <returns></returns>
+    public List<Animal> GetEliminateList()
+    {
+        if (canDo)
+        {
+            List<Animal> result = new List<Animal>();
+            if (x.Count >= 2)
+            {
+                for (int i = 0; i < x.Count; i++)
+                {
+                    result.Add(x[i].content.animal);
+                }
+            }
+            if (y.Count >= 2)
+            {
+                for (int i = 0; i < y.Count; i++)
+                {
+                    result.Add(y[i].content.animal);
+                }
+            }
+            result.Add(box.content.animal);   //-XA111303 特效处理
+            return result;
+        }
+        else
+        {
+            return null;
+        }
     }
     #region 测试
     public string GetTestString()

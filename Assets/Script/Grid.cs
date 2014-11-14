@@ -9,6 +9,7 @@
  * ======
  * -XA01:允许手动设置spawn点.
  * -XA02:影响管口变化的因素
+ * -XA111302  创建特效
  */
 using UnityEngine;
 using System.Collections;
@@ -26,18 +27,20 @@ public class Grid : Only<Grid> {
     public Box[] boxs = new Box[GRID_XY_COUNT];
     public List<int> spawnList = new List<int>();
     public List<int> necks = new List<int>(); //管口数据,Grid变化时,更改数据
-
+    public bool[] moveList;// = new bool[GRID_XY_COUNT];
+    bool stopCalled = false;
+    bool lastStopflag = false;
     int[] data = 
     {
-        0,1,0,1,1,0,1,0,1,          //1
-        1,1,1,1,1,1,1,0,1,          //2
-        0,1,1,1,1,0,1,1,1,          //3
-        0,1,1,1,1,0,1,1,0,          //4
-        0,1,1,1,1,0,1,1,0,          //5
-        0,1,1,1,1,0,1,1,0,          //6
-        1,1,1,1,1,1,1,1,1,          //7
-        1,1,1,1,1,1,1,1,1,          //8
-        1,1,1,1,1,1,1,1,1           //9
+        0,0,1,0,0,0,1,0,0,          //1
+        0,1,1,1,0,1,1,1,0,          //2
+        1,1,1,1,1,1,1,1,1,          //3
+        1,1,1,1,1,1,1,1,1,          //4
+        1,1,1,1,1,1,1,1,1,          //5
+        1,1,1,1,1,1,1,1,1,          //6
+        0,1,1,1,1,1,1,1,0,          //7
+        0,0,1,1,1,1,1,0,0,          //8
+        0,0,0,1,1,1,0,0,0           //9
     };
     //void Awake()
     //{
@@ -45,14 +48,58 @@ public class Grid : Only<Grid> {
     //}
 
 	void Start () {
+        moveList = new bool[GRID_XY_COUNT];
         CreateGrid();
         Camera.main.transform.position = CameraPosition();
         CalculateSpawn();
 	}
 	
-	void Update () {
-	
+	void LateUpdate () 
+    {
+        if (moveList.FirstIndexof<bool>(true) == -1)
+        {
+            if (lastStopflag)
+            {
+                if (!stopCalled)
+                {
+                    stopCalled = true;
+                    Stop();
+                }
+            }
+            else
+                lastStopflag = true;
+        }
+        else
+        {
+            lastStopflag = false;
+            stopCalled = false;
+        }
 	}
+    void Stop()
+    {
+        Clear();
+    }
+    void Clear()
+    {
+        List<Animal> tempList = new List<Animal>();
+        for (int i = 0; i < GRID_XY_COUNT; i++)
+        {
+            if (boxs[i] != null && boxs[i].content != null && !tempList.Contains(boxs[i].content.animal))
+            {
+                if(boxs[i].checker.Check(boxs[i].content.animal.color)) // -XA111302  创建特效
+                {
+                    foreach (Animal animal in boxs[i].checker.GetEliminateList())
+                    {
+                       tempList.Add(animal);
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < tempList.Count; i++)
+        {
+            tempList[i].EliminateSelf();
+        }
+    }
 
     void CreateGrid()
     {

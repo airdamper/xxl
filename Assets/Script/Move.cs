@@ -8,9 +8,17 @@ public class Move : MonoBehaviour {
     Action action;
     Action busyAction, idleAction;
     public MoveState moveState;
+    public Animal animal;
+
+    public event MoveState.MoveCallback event_move_complete;
 
     //public Box targetBox;
     public Box box; // currentBox
+
+    //用来控制移动后的检测
+    bool check1 = false;
+    bool stop1 = false;
+    bool stop2 = false;
 
     protected void Start()
     {
@@ -75,6 +83,10 @@ public class Move : MonoBehaviour {
         //print("MoveEnd");
         //targetBox = null;
         action = idleAction;
+        if (event_move_complete != null)
+        {
+            event_move_complete();
+        }
     }
     //移动中的处理
     void Busy()
@@ -86,18 +98,59 @@ public class Move : MonoBehaviour {
         }
         else
         {
-            transform.position = moveState.to;
-            moveState.isMoving = false;
+            Stop();
         }
         
+    }
+    public void Stop()
+    {
+        transform.position = moveState.to;
+        moveState.isMoving = false;
     }
     //检测是否可以移动
     void Idle()
     {
-        if (CanMove())
+        if (CanMove())    
         {
+            //check1 = false;   //重置,保证不能移动后只检测一次.
+            //stop1 = false;
             moveState.isMoving = true;
+            //print(box.index + "/" + Grid.Instance.moveList.Length);
+            if (!box.spawner)
+                Grid.Instance.moveList[box.index] = true;   //在是否可以移动中变换避免交换的时候出发检测
         }
+        else
+        {
+            //print(box.index + "/" + Grid.Instance.moveList.Length);
+            if(!box.spawner)
+                Grid.Instance.moveList[box.index] = false;
+        }
+        //else
+        //{
+        //    if (!box.spawner)
+        //    {
+        //        if (!stop1)
+        //            stop1 = true;
+        //        else if(!check1)
+        //        {
+        //            print(11111111111);
+        //            //stop1 = false;
+        //            check1 = true;
+        //        }
+        //    }
+        //}
+        //else if (!check1 && !box.spawner)
+        //{
+        //    Debug.Log("111111111111", gameObject);
+        //    check1 = true;
+        //    if (box.checker.Check(animal.color))
+        //    {
+        //        foreach (Animal item in box.checker.GetEliminateList())
+        //        {
+        //            item.Eliminate();
+        //        }
+        //    }
+        //}
     }
 
     //找要移动的目标,如果有可移动目标,反回要移动的目标,否则返回null
@@ -157,7 +210,8 @@ public class MoveState
         {
             if (value != _isMoving)
             {
-                if (_isMoving)
+                _isMoving = value;
+                if (!_isMoving)
                 {
                     if (event_move_end != null)
                     {
@@ -174,7 +228,6 @@ public class MoveState
                         runningTime = 0;
                     }
                 }
-                _isMoving = value;
             }
         }
     }

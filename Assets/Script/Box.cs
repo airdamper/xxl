@@ -15,6 +15,19 @@ public class Box : MonoBehaviour {
     public Box[] lower = new Box[3];
     public Move content;
     public Vector3 position;
+
+    AnimalChecker _checker;
+    public AnimalChecker checker
+    {
+        get
+        {
+            if (_checker == null)
+            {
+                _checker = new AnimalChecker(this);
+            }
+            return _checker;
+        }
+    }
     //该块是否是管口
     public bool isNeck
     {
