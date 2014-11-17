@@ -62,7 +62,8 @@ public class Select : MonoBehaviour
     void CancelSelect()
     {
         Sound.Instance.Click();
-        current.Play(AnimatEnum.idle);
+        if(current.stuntState == StuntEnum.none || current.stuntState == StuntEnum.bird)
+            current.Play(AnimatEnum.idle);
         current = null;
         tile.enabled = false;
     }
@@ -70,7 +71,8 @@ public class Select : MonoBehaviour
     {
         Sound.Instance.Click();
         current = animal;
-        current.Play(AnimatEnum.click);
+        if(animal.stuntState == StuntEnum.none || animal.stuntState == StuntEnum.bird)
+            current.Play(AnimatEnum.click);
         tile.transform.position = animal.move.box.position;
         tile.enabled = true;
         //测试AnimalChecker的邻居方法

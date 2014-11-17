@@ -9,7 +9,7 @@
  * ======
  * -XA01:允许手动设置spawn点.
  * -XA02:影响管口变化的因素
- * -XA111302  创建特效
+ * -XA111302  创建特技 (clear)
  */
 using UnityEngine;
 using System.Collections;
@@ -88,12 +88,35 @@ public class Grid : Only<Grid> {
         {
             if (boxs[i] != null && boxs[i].content != null && !tempList.Contains(boxs[i].content.animal))
             {
-                if(boxs[i].checker.Check(boxs[i].content.animal.color)) // -XA111302  创建特效
+                if(boxs[i].checker.Check(boxs[i].content.animal.color)) // -XA111302  创建特技 
                 {
-                    foreach (Animal animal in boxs[i].checker.GetEliminateList())
+                    //t
+                    List<Animal> list1 = boxs[i].checker.GetEliminateList();
+                    List<Animal> finalList = list1;
+                    int index = -1;
+                    for (int j = 0; j < list1.Count; j++)
                     {
-                       tempList.Add(animal);
+                        list1[j].move.box.checker.Check(list1[j].color);
+                        List<Animal> list2 = list1[j].move.box.checker.GetEliminateList();
+                        if (list2.Count > finalList.Count)
+                        {
+                            finalList = list2;
+                            index = j;
+                        }
                     }
+                    //t
+                    if(index > 0)
+                        list1[index].stuntState = list1[index].move.box.checker.stunt;  //这里可能会多检测一次
+                    
+
+
+                    //foreach (Animal animal in boxs[i].checker.GetEliminateList())
+                    foreach (Animal animal in finalList)
+                    {
+                        tempList.Add(animal);
+                    }
+                    //特技
+                    boxs[i].content.animal.stuntState = boxs[i].checker.stunt;
                 }
             }
         }

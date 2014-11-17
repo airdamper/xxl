@@ -6,6 +6,7 @@ public class Level : Only<Level>
     public GameObject animalPrefab;
     public RuntimeAnimatorController[] animalColor = new RuntimeAnimatorController[5];
     public RuntimeAnimatorController destroy_effect;
+    public RuntimeAnimatorController bird;
     public SpriteRenderer tileSelect;
     public GameObject mask;
 	// Use this for initialization

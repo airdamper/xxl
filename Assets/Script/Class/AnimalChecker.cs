@@ -4,7 +4,8 @@
  * 
  * ===========
  * 
- * -XA111303 特效处理
+ * -XA111303 特效处理 (clear)
+ * -XA111700 下落的wrap检测有问题.因为之进行x和y的检测.所以不能确保y上的正确性.是否需要改变单个Animal下落挺稳后就检测.(尝试去grid里搞)
  */
 using UnityEngine;
 using System.Collections;
@@ -16,6 +17,7 @@ public class AnimalChecker
     /// 是否有可以消除的对象
     /// </summary>
     public bool canDo { get;private set; }
+    public StuntEnum stunt { get; private set; }
     //int checkColor;
     Box box;
     List<Box> x = new List<Box>();
@@ -27,6 +29,7 @@ public class AnimalChecker
     public AnimalChecker(Box box)
     {
         this.box = box;
+        stunt = StuntEnum.none;
         up = GetNeighbor(-Grid.GRID_X_COUNT);
         down = GetNeighbor(Grid.GRID_X_COUNT);
         left = GetNeighbor(-1);
@@ -69,6 +72,7 @@ public class AnimalChecker
         AddToList(left, color, true);
         AddToList(right, color, true);
         canDo = x.Count >= 2 || y.Count >= 2;
+        SetStund();
         return canDo;
     }
     //boo用来区分横纵,true:x,false:y
@@ -114,13 +118,37 @@ public class AnimalChecker
                     result.Add(y[i].content.animal);
                 }
             }
-            result.Add(box.content.animal);   //-XA111303 特效处理
+            if (stunt == StuntEnum.none)
+                result.Add(box.content.animal);   //-XA111303 特效处理
             return result;
         }
         else
         {
             return null;
         }
+    }
+
+    void SetStund()
+    {
+        //x y 的列表中是不包含自身的,所以判断的数量条件要减1
+        
+        if(x.Count >=4 || y.Count >= 4)
+        {
+            stunt = StuntEnum.bird;
+        }
+        else if (x.Count >= 2 && y.Count >= 2)
+        {
+            stunt = StuntEnum.wrap;
+        }
+        else if (x.Count == 3)
+        {
+            stunt = StuntEnum.line;
+        }
+        else if (y.Count == 3)
+        {
+            stunt = StuntEnum.column;
+        }
+        //Debug.Log("x: " + x.Count + "   y: " + y.Count + "    " + stunt.ToString());
     }
     #region 测试
     public string GetTestString()

@@ -10,7 +10,38 @@ public class Animal : MonoBehaviour
     public int color;
     SpriteRenderer sprite;
     public Move move;
-    Animat agent;
+    public Animat agent;
+    StuntEnum _stuntState;
+    Stunt stunt;
+    public StuntEnum stuntState
+    {
+        get
+        {
+            return _stuntState;
+        }
+        set
+        {
+            _stuntState = value;
+            switch(value)
+            {
+                case StuntEnum.none:
+                    stunt = null;
+                    break;
+                case StuntEnum.line:
+                    stunt = new Line(this);
+                    break;
+                case StuntEnum.column:
+                    stunt = new Column(this);
+                    break;
+                case StuntEnum.wrap:
+                    stunt = new Wrap(this);
+                    break;
+                case StuntEnum.bird:
+                    stunt = new Bird(this);
+                    break;
+            }
+        }
+    }
 
     public Animal other; // 上一次交换的对象
 	// Use this for initialization
@@ -94,9 +125,26 @@ public class Animal : MonoBehaviour
     {
         Sound.Instance.Eliminate();
         //move.box.Leave();
-        agent.agent.runtimeAnimatorController = Level.Instance.destroy_effect;
-        Destroy(gameObject, 0.6f);
+        if (stuntState == StuntEnum.none)
+        {
+            DestroySelf();
+        }
+        else
+        {
+            stunt.Action();
+        }
         //计算加分     -XA111301
+    }
+    public void DestroySelf()
+    {
+
+        DestroySelf(true);
+    }
+    public void DestroySelf(bool playAnimation)
+    {
+        if(playAnimation)
+            agent.agent.runtimeAnimatorController = Level.Instance.destroy_effect;
+        Destroy(gameObject, 0.6f);
     }
     public void EliminateAll()
     {
@@ -106,6 +154,7 @@ public class Animal : MonoBehaviour
             {
                 animal.EliminateSelf();
             }
+            stuntState = move.box.checker.stunt;
         }
     }
     /// <summary>
@@ -129,4 +178,12 @@ public class Animal : MonoBehaviour
         other.EliminateAll();
         move.event_move_complete -= CallBack_MoveEnd_Eliminate;
     }
+}
+public enum StuntEnum
+{
+    none,
+    line,
+    column,
+    wrap,
+    bird
 }
