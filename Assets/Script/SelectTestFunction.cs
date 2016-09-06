@@ -20,7 +20,7 @@ public class SelectTestFunction : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                hit.transform.renderer.material.color = Color.black;
+                hit.transform.GetComponent<Renderer>().material.color = Color.black;
                 list.Add(hit.transform.GetComponent<Move>());
             }
         }
